@@ -11,15 +11,10 @@ xl_path = r'C:\Users\Димас жренанас\Desktop\cheks\payment.xlsx'
 files = os.listdir(path)  # берётся список файлов из директории
 list_files = [[file.split('.')[0], os.path.join(path, file)] for file in files]  # к названиям файлов прикрепляется путь
 
-for x in list_files:    # добавляется время создания файла
-    time_file = os.path.getmtime(x[1])
-    x.append(time_file)
-
-sort_time_list = sorted(list_files, key=lambda x: x[2])  # список сортируется по времени создания файлов
 count = 1
 row = 1
 
-for file in sort_time_list:
+for file in list_files:
 
     path_pdf_file = file[1]  # путь файла
     file_name = file[0]
@@ -36,15 +31,12 @@ for file in sort_time_list:
 
     workbook = load_workbook(xl_path)   # Загружаем файл xmlx
     worklist = workbook['list1']    # Говорим на каком листе будем работать
-    if file_name in worklist[f'A{row}'].value:
-        worklist[f'I{row}'] = png_loading_imgbb(path_png_file)
-    else:
-        i = 1
-        while not (file_name in worklist[f'A{i}'].value):
-            i += 1
-        worklist[f'I{i}'] = png_loading_imgbb(path_png_file)
+    i = 1
+    while not (file_name in worklist[f'A{i}'].value and worklist[f'D{i}'].value is None):
+        i += 1
+    worklist[f'I{i}'] = png_loading_imgbb(path_png_file)
     workbook.save(xl_path)  # Сохраняем xmlx файл
     workbook.close()    # закрываем xmlx файл
     row += 1
-    print(f'Осталось: {len(sort_time_list) - count}')
+    print(f'Осталось: {len(list_files) - count}')
     count += 1
